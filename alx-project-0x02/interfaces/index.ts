@@ -24,6 +24,10 @@ export interface PostProps {
   userId: number;
 }
 
+export interface PostsPageProps {
+  posts: PostProps[];
+}
+
 export interface UserProps {
   id: number;
   name: string;
@@ -34,4 +38,8 @@ export interface UserProps {
     city: string;
     zipcode: string;
   };
+}
+
+export interface UsersPageProps {
+  users: UserProps[];
 }

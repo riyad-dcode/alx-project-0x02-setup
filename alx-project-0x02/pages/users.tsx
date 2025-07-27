@@ -1,33 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import UserCard from '@/components/common/UserCard';
-import { UserProps } from '@/interfaces';
+import { UserProps,UsersPageProps } from '@/interfaces';
+import { GetStaticProps } from 'next';
 
-export default function UsersPage() {
-  const [users, setUsers] = useState<UserProps[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching users:', error);
-        setLoading(false);
-      });
-  }, []);
-
+export default function UsersPage({ users }: UsersPageProps) {
   return (
     <>
       <Header />
       <div className="p-8">
         <h1 className="text-4xl font-bold mb-6">Users</h1>
 
-        {loading ? (
-          <p className="text-gray-600">Loading users...</p>
+        {users.length === 0 ? (
+          <p className="text-gray-600">No users found.</p>
         ) : (
           users.map((user) => (
             <UserCard
@@ -43,3 +29,23 @@ export default function UsersPage() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    const users: UserProps[] = await res.json();
+
+    return {
+      props: {
+        users,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return {
+      props: {
+        users: [],
+      },
+    };
+  }
+};
